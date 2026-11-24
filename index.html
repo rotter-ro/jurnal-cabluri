@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Jurnal cabluri">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/png" href="icon-180.png">
+<link rel="preload" href="fonts/Poppins-Medium.woff" as="font" type="font/woff" crossorigin>
+<meta name="robots" content="noindex, nofollow">
+<title>Jurnal cabluri · Rotter</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ===== Setup screen ===== -->
+<section id="setup" class="setup" hidden>
+  <div class="setup-card">
+    <div class="brand"><img class="logo" src="rotter-logo.svg" alt="Rotter"><span class="sep"></span><span class="app-name">Jurnal cabluri</span></div>
+    <h1>Conectare</h1>
+    <p class="muted">Introdu datele primite de la Rotter. Se salvează doar pe acest iPad.</p>
+    <label>Adresa (URL) Google Apps Script
+      <input id="cfg-url" type="url" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off" autocapitalize="off" spellcheck="false">
+    </label>
+    <label>Cheie de acces
+      <input id="cfg-key" type="text" autocomplete="off" autocapitalize="off" spellcheck="false">
+    </label>
+    <label>Proiect (numele tab-ului din Sheet)
+      <input id="cfg-project" type="text" placeholder="penthouse-negru" autocapitalize="off" spellcheck="false">
+    </label>
+    <label>Numele tău (apare în raport la „Verificat de”)
+      <input id="cfg-name" type="text" placeholder="ex. Andrei – electrician">
+    </label>
+    <p id="setup-error" class="error" hidden></p>
+    <div class="setup-actions">
+      <button id="cfg-cancel" class="btn ghost" type="button" hidden>Înapoi</button>
+      <button id="cfg-save" class="btn primary" type="button">Conectează</button>
+    </div>
+    <details class="setup-link">
+      <summary>Link de configurare pentru alt iPad</summary>
+      <p class="muted">Trimite acest link pe iPad-ul care face verificarea. La prima deschidere completează automat datele.</p>
+      <div class="row"><input id="cfg-link" type="text" readonly><button id="cfg-copy" class="btn ghost" type="button">Copiază</button></div>
+    </details>
+  </div>
+</section>
+
+<!-- ===== Main app ===== -->
+<div id="app" class="app" hidden>
+  <header class="topbar">
+    <div class="brand"><img class="logo" src="rotter-logo.svg" alt="Rotter"><span class="sep"></span>
+      <div class="titles">
+        <strong id="project-title">Jurnal cabluri</strong>
+        <span id="project-sub" class="muted">—</span>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-nums">
+        <span><b id="p-done">0</b>/<span id="p-total">0</span> verificate</span>
+        <span class="pill ok"><i>✓</i><b id="p-ok">0</b></span>
+        <span class="pill ko"><i>✕</i><b id="p-ko">0</b></span>
+      </div>
+      <div class="bar"><span id="bar-ok"></span><span id="bar-ko"></span></div>
+    </div>
+    <button id="sync" class="sync" type="button" title="Sincronizează acum"><span class="dot"></span><span id="sync-label">—</span></button>
+    <div class="menu-wrap">
+      <button id="menu-btn" class="icon-btn" type="button" aria-label="Meniu">⋯</button>
+      <div id="menu" class="menu" hidden>
+        <button data-act="reload" type="button">Reîncarcă din Sheet</button>
+        <button data-act="csv" type="button">Export CSV</button>
+        <button data-act="print" type="button">Raport (Print / PDF)</button>
+        <button data-act="settings" type="button">Setări conexiune</button>
+      </div>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <div class="search">
+      <input id="search" type="search" placeholder="Caută: W12, Bucătărie, X2.L…" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="side-label">Status</div>
+    <div id="status-filters" class="chips">
+      <button data-f="all" class="chip on" type="button">Toate</button>
+      <button data-f="todo" class="chip" type="button">Neverificate</button>
+      <button data-f="ok" class="chip" type="button">Conforme</button>
+      <button data-f="ko" class="chip" type="button">Neconforme</button>
+      <button data-f="note" class="chip" type="button">Cu observații</button>
+    </div>
+    <div id="view-switch" class="seg" role="tablist">
+      <button data-view="cat" class="on" type="button" role="tab">Funcție</button>
+      <button data-view="room" type="button" role="tab">Încăpere</button>
+    </div>
+    <nav id="cats" class="cats"></nav>
+  </aside>
+
+  <main id="list" class="list" aria-live="polite"></main>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<!-- print-only report -->
+<section id="report" class="report"></section>
+
+<script src="app.js"></script>
+</body>
+</html>
