@@ -54,12 +54,10 @@ function doPost(e) {
       const i = rowOf[String(ch.id)];
       if (i === undefined) { skipped.push(ch.id); return; }
       const at = ch.at ? new Date(ch.at) : new Date();
-      const prevAt = data[i][cAt] ? new Date(data[i][cAt]) : null;
-      if (prevAt && !isNaN(prevAt) && prevAt > at) { skipped.push(ch.id); return; } // există deja o modificare mai nouă
       const row = i + 1;
       sh.getRange(row, cSt + 1).setValue(ch.status || '');
       sh.getRange(row, cOb + 1).setValue(ch.note || '');
-      sh.getRange(row, cAt + 1).setValue(at);
+      sh.getRange(row, cAt + 1).setValue(Utilities.formatDate(at, 'Europe/Bucharest', 'yyyy-MM-dd HH:mm:ss'));
       sh.getRange(row, cBy + 1).setValue(ch.by || '');
       log.appendRow([new Date(), body.p, ch.id, ch.status || '(neverificat)', ch.note || '', ch.by || '', at]);
       saved.push(ch.id);
@@ -100,7 +98,7 @@ function formateazaTab() {
   const head = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];
   const n = Math.max(sh.getLastRow() - 1, 1);
   sh.setFrozenRows(1);
-  sh.getRange(1, 1, 1, head.length).setFontWeight('bold').setBackground('#0f1720').setFontColor('#ffffff');
+  sh.getRange(1, 1, 1, head.length).setFontWeight('bold').setBackground('#32393E').setFontColor('#ffffff');
   const st = head.indexOf('Status') + 1;
   if (st > 0) {
     const r = sh.getRange(2, st, n, 1);
@@ -113,4 +111,12 @@ function formateazaTab() {
   const at = head.indexOf('Actualizat la') + 1;
   if (at > 0) sh.getRange(2, at, n, 1).setNumberFormat('dd.mm.yyyy hh:mm');
   sh.autoResizeColumns(1, head.length);
+}
+
+// Rulează o dată din editor: formatează tab-ul proiectului și creează tab-ul Log (cere autorizarea).
+function setup() {
+  const ss = SpreadsheetApp.getActive();
+  ss.setActiveSheet(ss.getSheetByName('penthouse-negru'));
+  formateazaTab();
+  logSheet_();
 }
